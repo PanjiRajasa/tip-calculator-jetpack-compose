@@ -1,3 +1,11 @@
+<h1>IDN: Disini saya mengambil starter code nya dari https://github.com/google-developer-training/basic-android-kotlin-compose-training-tip-calculator.git <br/>
+ENG: Here I took the starter code from https://github.com/google-developer-training/basic-android-kotlin-compose-training-tip-calculator.git
+</h1>
+<hr/>
+<p>ENG: The creation of this repository is only for learning purposes, not for commercial purposes, and everything below (both in the readme and license is the information listed by the previous starter code creator) 👇🏻👇🏻</p>
+<p>IDN: Pembuatan repositori ini hanya bertujuan untuk pembelajaran bukan untuk tujuan komersial, dan semua yang ada dibawah ini (baik di readme maupun licence adalah keterangan yang dicantumkan oleh pembuat starter code sebelumnya) 👇🏻👇🏻</p>
+=================================
+
 Tip Time - Solution Code
 =================================
 
