@@ -15,6 +15,7 @@
  */
 package com.example.tiptime
 
+//import
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -46,11 +47,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
+//function utama
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
+            //manggilnya disini
             TipTimeTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -62,30 +65,57 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+//fungsi untuk textfield
+//yang dalam () isinya parameter, {} isinya isi fungsinya
 @Composable
 fun EditNumberField(
-    @StringRes label: Int,
+    @StringRes label: Int, //ni parameternya ngambil agar
+    // nilainya cuman bisa pakai apa yang ada di strings.xml
+    //parameter value
     value: String,
+    //parameter onValueChanged
     onValueChanged: (String) -> Unit,
+    //parameter modifier
     modifier: Modifier = Modifier
 ) {
+    //fungsi ini manggil TextField
     TextField(
-        value = "",
-        onValueChange = { },
+        //nilai property TextField setara/ = dengan parameter fungsi
+        value = value,
+        onValueChange = onValueChanged,
         label = { Text(stringResource(label)) },
         modifier = modifier
     )
 }
 
+//fungsi untuk menampilkan teks, dalamnya dipanggil fungsi TextField
 @Composable
 fun TipTimeLayout() {
+
+    //variable buat state agar nilai TextField bisa berubah-ubah dan terus terupdate
+    //dikasih 'by remember {mutableStateOf()}' biar nilainya bisa berubah"
     var amountInput by remember { mutableStateOf("") }
     var tipInput by remember { mutableStateOf("") }
+
+    //variable buat ngitung tip
+    //disini makai elvis operator gini cara kerjanya: misalkan
+    //var amount = amountInput.toDoubleOrNull(): 0,0
+
+    //itu amount adalah namanya, amountInput ngambil dari variabel lain
+    // .toDoubleOrNull bakal ngubah ke Double, tapi kalau misal datanya engga double
+    // kayak misal "abc" maka akan jadi Null, dan disebelahnya ada elvis/ ?:
+    // ya kalau semial hasil amountInput.toDoubleOrNull nya null maka yang disebelah kanan
+    // bakal jadi nilai defaultnya yakni 0,0
+
     val amount = amountInput.toDoubleOrNull() ?: 0.0
     val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
 
-    val tip = calculateTip(amount, tipPercent)
+    val tip = calculateTip(amount, tipPercent) // ini buat ngitung tip
+
+    //maggil Column(parameter) {isinya}
     Column(
+
+        //dibawah ini biar ketengah pas
         modifier = Modifier.padding(40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -96,6 +126,10 @@ fun TipTimeLayout() {
                 .padding(bottom = 16.dp)
                 .align(alignment = Alignment.Start)
         )
+
+        //buat TextField pakai fungsi EditNumberField
+        // onValueChanged = { variable = it} tujuannya supaya nilai input disimpan dalam variablenya "it" itu gunanya menetapkan nilai variable ngikutin nilai terbaru TextField
+
         EditNumberField(
             label = R.string.bill_amount,
             value = amountInput,
@@ -114,22 +148,20 @@ fun TipTimeLayout() {
         )
         Text(
             text = stringResource(R.string.tip_amount, tip),
+            //style tu untuk menerapkan gaya ke text nya
             style = MaterialTheme.typography.displaySmall
         )
         Spacer(modifier = Modifier.height(150.dp))
     }
 }
 
-/**
- * Calculates the tip based on the user input and format the tip amount
- * according to the local currency.
- * Example would be "$10.00".
- */
+//fungsi ngitung tip
 private fun calculateTip(amount: Double, tipPercent: Double = 15.0): String {
     val tip = tipPercent / 100 * amount
-    return NumberFormat.getCurrencyInstance().format(tip)
+    return NumberFormat.getCurrencyInstance().format(tip) // ini buat format mata uang 🤑💲💸💰
 }
 
+//fungsi buat preview doang
 @Preview(showBackground = true)
 @Composable
 fun TipTimeLayoutPreview() {
