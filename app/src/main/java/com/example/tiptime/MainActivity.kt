@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -46,6 +47,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 
 //function utama
 class MainActivity : ComponentActivity() {
@@ -77,6 +80,7 @@ fun EditNumberField(
     onValueChanged: (String) -> Unit,
     //parameter modifier
     modifier: Modifier = Modifier
+
 ) {
     //fungsi ini manggil TextField
     TextField(
@@ -84,7 +88,12 @@ fun EditNumberField(
         value = value,
         onValueChange = onValueChanged,
         label = { Text(stringResource(label)) },
-        modifier = modifier
+        modifier = modifier,
+        //nyetel keyboard
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Next
+        )
     )
 }
 
