@@ -52,6 +52,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.focus.FocusDirection
+import kotlin.math.ceil
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 
 //function utama
 class MainActivity : ComponentActivity() {
@@ -98,6 +101,21 @@ fun EditNumberField(
         keyboardOptions = keyboardOptions, // Gunakan keyboardOptions di sini
         keyboardActions = keyboardActions // Masukkan keyboardActions di sini
     )
+}
+
+//fungsi pembulatan, jika user mau membulatkan tip
+@Composable
+fun RoundTip(
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .size(48.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = stringResource(R.string.round_tip))
+    }
 }
 
 //fungsi untuk menampilkan teks, dalamnya dipanggil fungsi TextField

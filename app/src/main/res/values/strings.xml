@@ -5,4 +5,5 @@
     <string name="bill_amount" translatable="false">Bill Amount</string>
     <string name="tip_amount" translatable="false">Tip Amount: %s</string>
     <string name="how_was_the_service"> Tip Percentage</string>
+    <string name="round_tip">Round up tip?</string>
 </resources>
