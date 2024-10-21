@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -47,8 +48,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.focus.FocusDirection
 
 //function utama
 class MainActivity : ComponentActivity() {
@@ -80,7 +83,8 @@ fun EditNumberField(
     onValueChanged: (String) -> Unit,
     //parameter modifier
     modifier: Modifier = Modifier,
-    keyboardOptions: KeyboardOptions
+    keyboardOptions: KeyboardOptions,
+    keyboardActions: KeyboardActions
 
 ) {
     //fungsi ini manggil TextField
@@ -91,10 +95,8 @@ fun EditNumberField(
         label = { Text(stringResource(label)) },
         modifier = modifier,
         //nyetel keyboard
-        keyboardOptions = KeyboardOptions.Default.copy(
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Next
-        )
+        keyboardOptions = keyboardOptions, // Gunakan keyboardOptions di sini
+        keyboardActions = keyboardActions // Masukkan keyboardActions di sini
     )
 }
 
@@ -121,6 +123,8 @@ fun TipTimeLayout() {
     val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
 
     val tip = calculateTip(amount, tipPercent) // ini buat ngitung tip
+    // FocusManager untuk menangani peralihan fokus
+    val focusManager = LocalFocusManager.current
 
     //maggil Column(parameter) {isinya}
     Column(
@@ -150,6 +154,10 @@ fun TipTimeLayout() {
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
+            ),
+            // Action untuk pindah fokus ke TextField berikutnya
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Down) }
             )
         )
         EditNumberField(
@@ -160,9 +168,14 @@ fun TipTimeLayout() {
                 .padding(bottom = 32.dp)
                 .fillMaxWidth(),
             keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Number
+            ),
+            // Action untuk menutup keyboard ketika "Done" ditekan
+            keyboardActions = KeyboardActions(
+                onDone = { focusManager.clearFocus() }
             )
+
         )
         Text(
             text = stringResource(R.string.tip_amount, tip),
