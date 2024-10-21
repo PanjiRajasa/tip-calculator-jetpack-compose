@@ -79,7 +79,8 @@ fun EditNumberField(
     //parameter onValueChanged
     onValueChanged: (String) -> Unit,
     //parameter modifier
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    keyboardOptions: KeyboardOptions
 
 ) {
     //fungsi ini manggil TextField
@@ -145,7 +146,11 @@ fun TipTimeLayout() {
             onValueChanged = { amountInput = it },
             modifier = Modifier
                 .padding(bottom = 32.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            )
         )
         EditNumberField(
             label = R.string.how_was_the_service,
@@ -153,7 +158,11 @@ fun TipTimeLayout() {
             onValueChanged = { tipInput = it },
             modifier = Modifier
                 .padding(bottom = 32.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            )
         )
         Text(
             text = stringResource(R.string.tip_amount, tip),
