@@ -20,6 +20,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,8 +54,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.focus.FocusDirection
 import kotlin.math.ceil
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Icon
+import androidx.compose.ui.res.painterResource
 
 //function utama
 class MainActivity : ComponentActivity() {
@@ -79,6 +88,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun EditNumberField(
     @StringRes label: Int, //ni parameternya ngambil agar
+    @DrawableRes leadingIcon: Int,
     // nilainya cuman bisa pakai apa yang ada di strings.xml
     //parameter value
     value: String,
@@ -99,14 +109,20 @@ fun EditNumberField(
         modifier = modifier,
         //nyetel keyboard
         keyboardOptions = keyboardOptions, // Gunakan keyboardOptions di sini
-        keyboardActions = keyboardActions // Masukkan keyboardActions di sini
+        keyboardActions = keyboardActions, // Masukkan keyboardActions di sini
+        leadingIcon = {
+            Icon(painter =
+            painterResource(id = leadingIcon),contentDescription = null)
+        }
     )
 }
 
 //fungsi pembulatan, jika user mau membulatkan tip
 @Composable
 fun RoundTip(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    roundUp: Boolean,
+    onRoundUpChanged: (Boolean) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -114,13 +130,25 @@ fun RoundTip(
             .size(48.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = stringResource(R.string.round_tip))
+        Text(text = stringResource(R.string.round_tip));
+
+        Switch(
+            modifier = modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.End),
+            checked = roundUp,
+            onCheckedChange = onRoundUpChanged
+        )
+
     }
 }
 
 //fungsi untuk menampilkan teks, dalamnya dipanggil fungsi TextField
 @Composable
 fun TipTimeLayout() {
+
+    //variable untuk Switch
+    var roundUp by remember {mutableStateOf(false)}
 
     //variable buat state agar nilai TextField bisa berubah-ubah dan terus terupdate
     //dikasih 'by remember {mutableStateOf()}' biar nilainya bisa berubah"
@@ -140,7 +168,7 @@ fun TipTimeLayout() {
     val amount = amountInput.toDoubleOrNull() ?: 0.0
     val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
 
-    val tip = calculateTip(amount, tipPercent) // ini buat ngitung tip
+    val tip = calculateTip(amount, tipPercent, roundUp) // ini buat ngitung tip
     // FocusManager untuk menangani peralihan fokus
     val focusManager = LocalFocusManager.current
 
@@ -148,7 +176,9 @@ fun TipTimeLayout() {
     Column(
 
         //dibawah ini biar ketengah pas
-        modifier = Modifier.padding(40.dp),
+        modifier = Modifier
+            .padding(40.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -176,7 +206,8 @@ fun TipTimeLayout() {
             // Action untuk pindah fokus ke TextField berikutnya
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Down) }
-            )
+            ),
+            leadingIcon = R.drawable.money
         )
         EditNumberField(
             label = R.string.how_was_the_service,
@@ -192,21 +223,35 @@ fun TipTimeLayout() {
             // Action untuk menutup keyboard ketika "Done" ditekan
             keyboardActions = KeyboardActions(
                 onDone = { focusManager.clearFocus() }
-            )
-
+            ),
+            leadingIcon = R.drawable.percent
         )
+
+        RoundTip(
+            modifier = Modifier.padding(bottom = 0.dp),
+            roundUp = roundUp,
+            onRoundUpChanged = {roundUp = it}
+        )
+
         Text(
             text = stringResource(R.string.tip_amount, tip),
             //style tu untuk menerapkan gaya ke text nya
-            style = MaterialTheme.typography.displaySmall
+            style = MaterialTheme.typography.displaySmall,
+            modifier = Modifier.padding(top = 20.dp)
         )
         Spacer(modifier = Modifier.height(150.dp))
     }
 }
 
 //fungsi ngitung tip
-private fun calculateTip(amount: Double, tipPercent: Double = 15.0): String {
-    val tip = tipPercent / 100 * amount
+private fun calculateTip(amount: Double, tipPercent: Double = 15.0, roundUp: Boolean): String {
+    var tip = tipPercent / 100 * amount
+
+    //if statement untuk roundUp
+    if(roundUp) {
+        tip = kotlin.math.ceil(tip)
+    }
+
     return NumberFormat.getCurrencyInstance().format(tip) // ini buat format mata uang 🤑💲💸💰
 }
 
